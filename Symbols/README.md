@@ -4,7 +4,7 @@ Sketch Symbols is a plug-in for [Sketch](http://bohemiancoding.com/sketch/) that
 
 ## Demo
 
-[![Demo Video](https://raw.github.com/tisho/sketch-plugins/gh-pages/images/demo-video-thumb.png)](https://vimeo.com/83370438)
+[![Demo Video](http://tisho.github.io/sketch-plugins/images/demo-video-thumb.png)](https://vimeo.com/83370438)
 
 ## Installation
 
@@ -12,11 +12,11 @@ Sketch Symbols is a plug-in for [Sketch](http://bohemiancoding.com/sketch/) that
 2. Double-click the file `Sync Symbol.sketchplugin` inside `Symbols/`. Sketch should open
    automatically and tell you that a new plugin was installed.
 
-![Installed Plugin Message](https://raw.github.com/tisho/sketch-plugins/gh-pages/images/plugin-installed.png)
+![Installed Plugin Message](http://tisho.github.io/sketch-plugins/images/plugin-installed.png)
 
 You should see the **Sync Symbol** entry under the Plugins menu now.
 
-![Plugins Menu](https://raw.github.com/tisho/sketch-plugins/gh-pages/images/plugin-menu.png)
+![Plugins Menu](http://tisho.github.io/sketch-plugins/images/plugin-menu.png)
 
 ## Usage
 
@@ -24,7 +24,7 @@ You should see the **Sync Symbol** entry under the Plugins menu now.
 2. Add **": symbol-name"** to its name to mark it as a symbol. *E.g.: "signup
    button : button-default".*
 
-    ![Symbol Name Example](https://raw.github.com/tisho/sketch-plugins/gh-pages/images/symbol-name.png)
+    ![Symbol Name Example](http://tisho.github.io/sketch-plugins/images/symbol-name.png)
 
 3. Copy the same symbol to other parts of your document. You
    can change the name before the colon to whatever you like.
@@ -40,7 +40,7 @@ not be replaced. Their styles, including font size, family and line height will 
 intact. This lets you define a single symbol for a button, for example, but use
 different copy for each instance of that button.
 
-    ![Dynamic Layer Name Example](https://raw.github.com/tisho/sketch-plugins/gh-pages/images/dynamic-layer-name.png)
+    ![Dynamic Layer Name Example](http://tisho.github.io/sketch-plugins/images/dynamic-layer-name.png)
 
 ## Changing the Default Keyboard Shortcut
 
