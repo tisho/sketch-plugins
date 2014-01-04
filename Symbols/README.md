@@ -12,11 +12,11 @@ Sketch Symbols is a plug-in for [Sketch](http://bohemiancoding.com/sketch/) that
 2. Double-click the file `Sync Symbol.sketchplugin` inside `Symbols/`. Sketch should open
    automatically and tell you that a new plugin was installed.
 
-![Installed Plugin Message](http://tisho.github.io/sketch-plugins/images/plugin-installed.png)
+<img src="http://tisho.github.io/sketch-plugins/images/plugin-installed.png" alt="Installed Plugin Message" width="534" />
 
 You should see the **Sync Symbol** entry under the Plugins menu now.
 
-![Plugins Menu](http://tisho.github.io/sketch-plugins/images/plugin-menu.png)
+<img src="http://tisho.github.io/sketch-plugins/images/plugin-menu.png" alt="Plugin Menu" width="317" />
 
 ## Usage
 
