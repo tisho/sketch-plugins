@@ -1,24 +1,25 @@
 # Sketch Symbols
 
-Sketch Symbols is a plug-in for Sketch (http://bohemiancoding.com/sketch/) that lets you mimic basic Smart Objects / Symbols functionality by automatically syncing changes between layer groups named in a particular way. As an added bonus, you can mark certain text layers in your symbols as dynamic and have their styles replicated, but not their content.
+Sketch Symbols is a plug-in for [Sketch](http://bohemiancoding.com/sketch/) that lets you mimic basic Smart Objects / Symbols functionality by automatically syncing changes between layer groups named in a particular way. As an added bonus, you can mark certain text layers in your symbols as dynamic and have their styles replicated, but not their content.
+
+## Demo
 
 ## Installation
 
-1. Download the plugin.
+1. [Download the plugin.](https://github.com/tisho/sketch-plugins/archive/master.zip)
 2. Double-click the `.sketchplugin` file. Sketch should open
    automatically and tell you that a new plugin was installed.
 
 ## Usage
 
 1. Create a layer group for your symbol. (`Cmd + G`)
-2. Add ": symbol-name" to its name to mark it as a symbol. E.g.: "signup
+2. Add **": symbol-name"** to its name to mark it as a symbol. E.g.: "signup
    button : button-default".
-3. Use a copy of the same symbol in other parts of your document. You
+3. Copy the same symbol to other parts of your document. You
    can change the name before the colon to whatever you like.
-E.g.: "signin button : button-default".
+E.g.: "ok button : button-default".
 4. Make changes to any of the copies of the symbol you've created. Press
-   `Cmd + E` to sync these changes with other instances of the same
-symbol.
+   `Cmd + E` to sync these changes with other instances of the symbol.
 
 ## Dynamic Text Layers
 
@@ -37,14 +38,20 @@ choose "Open Plugins Folder".
    editor.
 3. The shortcut is on the first line:
 
-  // Syncs all instances of a symbol tagged with ": symbol-name" **(cmd e)**
+    ```
+    // Syncs all instances of a symbol tagged with ": symbol-name" **(cmd e)**
+    ```
 
   Change it to whatever you like (ctrl shift s, for example), and you
 should be good to go. The following modifiers are all valid: `control ctrl alt option cmd command shift`.
 
+## Issues and Questions
+
+[File an issue on Github](https://github.com/tisho/sketch-plugins/issues), send a message to [@tisho](http://twitter.com/tisho) on Twitter, or email <t@tisho.co>.
+
 ## Thanks
 
-Bohemian Coding for creating Sketch in the first place and @bomberstudios for their wonderful sketch-commands bundle (https://github.com/bomberstudios/sketch-commands), which proved a wonderful source for learning and inspiration.
+Bohemian Coding for creating [Sketch](http://bohemiancoding.com/sketch/) in the first place and @bomberstudios for their wonderful [sketch-commands bundle](https://github.com/bomberstudios/sketch-commands), which proved a wonderful source for learning and inspiration.
 
 ## License
 
