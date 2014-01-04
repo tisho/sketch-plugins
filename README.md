@@ -51,7 +51,7 @@ should be good to go. The following modifiers are all valid: `control ctrl alt o
 
 ## Thanks
 
-Bohemian Coding for creating [Sketch](http://bohemiancoding.com/sketch/) in the first place and @bomberstudios for their wonderful [sketch-commands bundle](https://github.com/bomberstudios/sketch-commands), which proved a wonderful source for learning and inspiration.
+Bohemian Coding for creating [Sketch](http://bohemiancoding.com/sketch/) in the first place and [@bomberstudios](http://twitter.com/bomberstudios) for the wonderful [sketch-commands bundle](https://github.com/bomberstudios/sketch-commands), which proved a wonderful source for learning and inspiration.
 
 ## License
 
