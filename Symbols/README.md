@@ -7,7 +7,7 @@ Sketch Symbols is a plug-in for [Sketch](http://bohemiancoding.com/sketch/) that
 ## Installation
 
 1. [Download the plugin.](https://github.com/tisho/sketch-plugins/archive/master.zip)
-2. Double-click the `.sketchplugin` file. Sketch should open
+2. Double-click the file `Sync Symbol.sketchplugin` inside `Symbols/`. Sketch should open
    automatically and tell you that a new plugin was installed.
 
 ## Usage
