@@ -40,7 +40,7 @@ not be replaced. Their styles, including font size, family and line height will 
 intact. This lets you define a single symbol for a button, for example, but use
 different copy for each instance of that button.
 
-    ![Dynamic Layer Name Example](http://tisho.github.io/sketch-plugins/images/dynamic-layer-name.png)
+![Dynamic Layer Name Example](http://tisho.github.io/sketch-plugins/images/dynamic-layer-name.png)
 
 ## Changing the Default Keyboard Shortcut
 
