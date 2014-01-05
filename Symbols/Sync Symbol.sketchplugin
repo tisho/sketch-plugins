@@ -1,5 +1,5 @@
 // Syncs all instances of a symbol tagged with ": symbol-name" (cmd e)
-// v0.1
+// v0.2
 
 var tagPattern = /:\s*(.*)$/;
 
@@ -122,8 +122,40 @@ function copyLayerPosition(src, dst) {
   var srcFrame = [src frame],
       dstFrame = [dst frame];
 
-  [dstFrame setX:[srcFrame x]];
-  [dstFrame setY:[srcFrame y]];
+  if([src class] === MSTextLayer) {
+    var textBehaviour = [src textBehaviour], // 0 = flexible, 1 = fixed
+        alignment = [src textAlignment]; // 0 = left, 1 = right, 2 = center, 3 = justified
+
+    if(textBehaviour === 0) { // flexible text behaviour
+      switch(alignment) {
+        case 0: // left
+          [dstFrame setX:[srcFrame x]];
+          [dstFrame setY:[srcFrame y]];
+          break;
+        case 1: // right
+          [dstFrame setMaxX:[srcFrame maxX]];
+          [dstFrame setMaxY:[srcFrame maxY]];
+          break;
+        case 2: // center
+        case 3: // justified
+          [dstFrame setMidX:[srcFrame midX]];
+          [dstFrame setMidY:[srcFrame midY]];
+          break;
+      }
+    } else { // fixed text behaviour
+      [dstFrame setX:[srcFrame x]];
+      [dstFrame setY:[srcFrame y]];
+      [dstFrame setWidth:[srcFrame width]];
+      [dstFrame setHeight:[srcFrame height]];
+    }
+
+    [dst setTextBehaviour:textBehaviour];
+  } else {
+    [dstFrame setX:[srcFrame x]];
+    [dstFrame setY:[srcFrame y]];
+    [dstFrame setWidth:[srcFrame width]];
+    [dstFrame setHeight:[srcFrame height]];
+  }
 }
 
 (function main() {
