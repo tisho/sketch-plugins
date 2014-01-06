@@ -32,6 +32,10 @@ E.g.: "ok button : button-default".
 4. Make changes to any of the copies of the symbol you've created. Press
    `Cmd + E` to sync these changes with other instances of the symbol.
 
+**Bonus Tip:** Open *Preferences* and under *Layers* uncheck *"Append
+'Copy' after duplicated layers"*, so you don't need to tweak the symbol
+name after you duplicate it.
+
 ## Dynamic Text Layers
 
 Put a `$` in front of the name of any text layer inside a symbol to mark
@@ -52,11 +56,26 @@ choose "Open Plugins Folder".
 3. The shortcut is on the first line:
 
     ```
-    // Syncs all instances of a symbol tagged with ": symbol-name" **(cmd e)**
+    // Syncs all instances of a symbol tagged with ": symbol-name" (cmd e)
     ```
 
   Change it to whatever you like (ctrl shift s, for example), and you
 should be good to go. The following modifiers are all valid: `control ctrl alt option cmd command shift`.
+
+## Updating the Plugin
+
+Right now there's no automated way to update plugins. You'll have to
+replace the plugin files manually.
+
+1. [Download the latest version of the plugin.](https://github.com/tisho/sketch-plugins/archive/master.zip)
+2. Open Sketch's plugins folder. You can do that easily by choosing
+   Custom Script from the Plugins menu, then click the gear icon and
+choose "Open Plugins Folder".
+3. Replace the file `Sync Symbol.sketchplugin` with its new version from
+   the archive you downloaded.
+
+You don't need to restart Sketch. It will pick up the changes
+automatically.
 
 ## Issues and Questions
 
