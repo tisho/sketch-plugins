@@ -3,13 +3,13 @@
 
 var tagPattern = /:\s*(.*)$/;
 
-function getNearestLayerGroup(ref) {
+function getNearestTaggedLayerGroup(ref) {
   var klass = [ref class];
   if(klass === MSArtboardGroup || klass === MSPage) {
     return null;
   }
 
-  while(ref && [ref class] !== MSLayerGroup) {
+  while(ref && ([ref class] !== MSLayerGroup || ([ref class] === MSLayerGroup && ![ref name].match(tagPattern)))) {
     ref = [ref parentGroup];
   }
 
@@ -159,7 +159,7 @@ function copyLayerPosition(src, dst) {
 }
 
 (function main() {
-  var layerGroup = getNearestLayerGroup(selection[0]);
+  var layerGroup = getNearestTaggedLayerGroup(selection[0]);
   if(!layerGroup) return;
 
   var name = [layerGroup name];
