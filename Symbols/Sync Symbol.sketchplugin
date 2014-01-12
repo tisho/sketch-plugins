@@ -3,6 +3,12 @@
 
 var tagPattern = /:\s*(.*)$/;
 
+function alert(msg, title) {
+  title = title || "Whoops";
+  var app = [NSApplication sharedApplication];
+  [app displayDialog:msg withTitle:title];
+}
+
 function getNearestTaggedLayerGroup(ref) {
   var klass = [ref class];
   if(klass === MSArtboardGroup || klass === MSPage) {
@@ -103,7 +109,7 @@ function copyLayerStyle(src, dst) {
       var style = srcCol[i];
       dstCol.addNewStylePart();
       var newStyle = dstCol[dstCol.length() - 1];
-      
+
       syncProperties(style, newStyle, propSet);
     }
   })
@@ -159,12 +165,21 @@ function copyLayerPosition(src, dst) {
 }
 
 (function main() {
+
+  // HACK: on a freshly started Sketch instance, 'selection' is null until you select an object
+  if(!(selection && [selection length])) {
+    alert("Make sure you've selected a symbol, or a layer that belongs to one before you try to sync.");
+    return;
+  }
+
   var layerGroup = getNearestTaggedLayerGroup(selection[0]);
-  if(!layerGroup) return;
+  if(!layerGroup) {
+    alert("Make sure you've selected a symbol, or a layer that belongs to one before you try to sync.");
+    return;
+  }
 
   var name = [layerGroup name];
   var tag = name.match(tagPattern);
-  if(!tag) return;
 
   var tag = tag[1],
       pages = [doc pages],
@@ -186,7 +201,7 @@ function copyLayerPosition(src, dst) {
     for(var i=0,l=targetLayers.length; i < l; i++) {
       var layer = targetLayers[i],
           name = ''+[layer name];
-      
+
       if(name.slice(0, 1) === '$') {
         protectedLayerNames.push(name);
         protectedLayers.push(targetLayers[i]);
