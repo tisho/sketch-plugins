@@ -166,16 +166,18 @@ function copyLayerPosition(src, dst) {
 
 (function main() {
 
-  // No selection
-  if([selection length] != 1) {
-    alert("You need to select exactly one symbol instance.","Too many objects selected");
+  // HACK: on a freshly started Sketch instance, 'selection' is null until you select an object
+  if (selection === null) {
+    selection = [[NSArray alloc] init]
+  }
+  if([selection length] === 0) {
+    alert("Make sure you've selected a symbol, or a layer that belongs to one before you try to sync.");
     return null;
   }
 
   var layerGroup = getNearestTaggedLayerGroup(selection[0]);
   if(!layerGroup) {
-    var s = selection[0];
-    alert("To turn this layer into symbol, make sure it is a group and name it '" + [s name] + " :symbol-name'.","Your selection does not contain a symbol");
+    alert("Make sure you've selected a symbol, or a layer that belongs to one before you try to sync.");
     return;
   }
 
