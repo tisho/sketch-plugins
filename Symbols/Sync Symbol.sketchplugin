@@ -167,12 +167,9 @@ function copyLayerPosition(src, dst) {
 (function main() {
 
   // HACK: on a freshly started Sketch instance, 'selection' is null until you select an object
-  if (selection === null) {
-    selection = [[NSArray alloc] init]
-  }
-  if([selection length] === 0) {
+  if(!(selection && [selection length])) {
     alert("Make sure you've selected a symbol, or a layer that belongs to one before you try to sync.");
-    return null;
+    return;
   }
 
   var layerGroup = getNearestTaggedLayerGroup(selection[0]);
