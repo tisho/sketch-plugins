@@ -3,6 +3,12 @@
 
 var tagPattern = /:\s*(.*)$/;
 
+function alert(msg, title) {
+  if (title == undefined) { title = "Whoops" };
+  var app = [NSApplication sharedApplication];
+  [app displayDialog:msg withTitle:title];
+}
+
 function getNearestTaggedLayerGroup(ref) {
   var klass = [ref class];
   if(klass === MSArtboardGroup || klass === MSPage) {
@@ -103,7 +109,7 @@ function copyLayerStyle(src, dst) {
       var style = srcCol[i];
       dstCol.addNewStylePart();
       var newStyle = dstCol[dstCol.length() - 1];
-      
+
       syncProperties(style, newStyle, propSet);
     }
   })
@@ -159,12 +165,22 @@ function copyLayerPosition(src, dst) {
 }
 
 (function main() {
+
+  // No selection
+  if([selection length] != 1) {
+    alert("You need to select exactly one symbol instance.","Too many objects selected");
+    return null;
+  }
+
   var layerGroup = getNearestTaggedLayerGroup(selection[0]);
-  if(!layerGroup) return;
+  if(!layerGroup) {
+    var s = selection[0];
+    alert("To turn this layer into symbol, make sure it is a group and name it '" + [s name] + " :symbol-name'.","Your selection does not contain a symbol");
+    return;
+  }
 
   var name = [layerGroup name];
   var tag = name.match(tagPattern);
-  if(!tag) return;
 
   var tag = tag[1],
       pages = [doc pages],
@@ -186,7 +202,7 @@ function copyLayerPosition(src, dst) {
     for(var i=0,l=targetLayers.length; i < l; i++) {
       var layer = targetLayers[i],
           name = ''+[layer name];
-      
+
       if(name.slice(0, 1) === '$') {
         protectedLayerNames.push(name);
         protectedLayers.push(targetLayers[i]);

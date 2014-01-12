@@ -29,7 +29,7 @@ You should see the **Sync Symbol** entry under the Plugins menu now.
 3. Copy the same symbol to other parts of your document. You
    can change the name before the colon to whatever you like.
 E.g.: "ok button : button-default".
-4. Make changes to any of the copies of the symbol you've created. Press
+4. Make changes to any of the copies of the symbol you've created. Select the instance of the symbol you want to use as the "source of truth" and press
    `Cmd + E` to sync these changes with other instances of the symbol.
 
 **Bonus Tip:** Open *Preferences* and under *Layers* uncheck *"Append
