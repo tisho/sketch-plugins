@@ -4,7 +4,7 @@
 var tagPattern = /:\s*(.*)$/;
 
 function alert(msg, title) {
-  if (title == undefined) { title = "Whoops" };
+  title = title || "Whoops";
   var app = [NSApplication sharedApplication];
   [app displayDialog:msg withTitle:title];
 }
