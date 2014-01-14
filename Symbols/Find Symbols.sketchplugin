@@ -1,0 +1,106 @@
+// Finds all instances of a symbol tagged with ": symbol-name" (cmd shift f)
+// Based on v0.2 of Sync Symbol.sketchplugin
+
+var tagPattern = /:\s*(.*)$/;
+
+function alert(msg, title) {
+  title = title || "Whoops";
+  var app = [NSApplication sharedApplication];
+  [app displayDialog:msg withTitle:title];
+}
+
+function getNearestTaggedLayerGroup(ref) {
+  var klass = [ref class];
+  if(klass === MSArtboardGroup || klass === MSPage) {
+    return null;
+  }
+
+  while(ref && ([ref class] !== MSLayerGroup || ([ref class] === MSLayerGroup && ![ref name].match(tagPattern)))) {
+    ref = [ref parentGroup];
+  }
+
+  return ref;
+}
+
+function toJSArray(arr) {
+  var len = arr.length(), res = [];
+
+  while(len--) {
+    res.push(arr[len]);
+  }
+  return res;
+}
+
+function filterNSArray(arr, test) {
+  var len = arr.length(), res = [];
+  while(len--) {
+    if(test(arr[len])) {
+      res.push(arr[len]);
+    }
+  }
+  return res;
+}
+
+function isGroup(layer) {
+  var klass = [layer class];
+  return klass === MSLayerGroup || klass === MSArtboardGroup;
+}
+
+function getLayerGroupsByTag(parent, tag) {
+  var all = [parent layers];
+  // sometimes layers returns an instance of JSCocoaController, I'm not sure why
+  if([all class] === JSCocoaController) return [];
+
+  var groups = filterNSArray(all, isGroup),
+      tagged = [],
+      notTagged = [];
+
+  groups.forEach(function(group) {
+    var name = [group name];
+    var groupTag = name.match(tagPattern);
+    if(groupTag && groupTag[1] === tag) {
+      tagged.push(group);
+    } else {
+      nested = getLayerGroupsByTag(group, tag);
+      Array.prototype.push.apply(tagged, nested);
+    }
+  });
+
+  return tagged;
+}
+
+(function main() {
+
+  // HACK: on a freshly started Sketch instance, 'selection' is null until you select an object
+  if(!(selection && [selection length])) {
+    alert("Make sure you've selected a symbol, or a layer that belongs to one before you try to find.");
+    return;
+  }
+
+  var layerGroup = getNearestTaggedLayerGroup(selection[0]);
+  if(!layerGroup) {
+    alert("Make sure you've selected a symbol, or a layer that belongs to one before you try to find.");
+    return;
+  }
+
+  var name = [layerGroup name];
+  var tag = name.match(tagPattern);
+
+  var tag = tag[1],
+      pages = [doc pages],
+      groups = [];
+
+  var count = 0;
+  var pageCount = 0;
+  var result = "";
+
+  for(var i=0, l=pages.length(); i < l; i++) {
+    pageGroups = getLayerGroupsByTag(pages[i], tag);
+    groups = Array.prototype.concat.apply(groups, pageGroups);
+    if(pageGroups.length>0){
+      result += "\n\tPage "+(i+1)+" has "+pageGroups.length+" matches.";
+    }
+  }
+
+  alert("Found total "+groups.length+" groups matching '"+tag+"'."+result,"Find Symbol");
+})();
