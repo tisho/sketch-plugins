@@ -1,0 +1,240 @@
+// Syncs all instances of a symbol tagged with ": symbol-name" (cmd alt e)
+// v0.2
+
+var tagPattern = /:\s*(.*)$/;
+
+function alert(msg, title) {
+  title = title || "Whoops";
+  var app = [NSApplication sharedApplication];
+  [app displayDialog:msg withTitle:title];
+}
+
+function getNearestTaggedLayerGroup(ref) {
+  var klass = [ref class];
+  if(klass === MSArtboardGroup || klass === MSPage) {
+    return null;
+  }
+
+  while(ref && ([ref class] !== MSLayerGroup || ([ref class] === MSLayerGroup && ![ref name].match(tagPattern)))) {
+    ref = [ref parentGroup];
+  }
+
+  return ref;
+}
+
+function toJSArray(arr) {
+  var len = arr.length(), res = [];
+
+  while(len--) {
+    res.push(arr[len]);
+  }
+  return res;
+}
+
+function filterNSArray(arr, test) {
+  var len = arr.length(), res = [];
+  while(len--) {
+    if(test(arr[len])) {
+      res.push(arr[len]);
+    }
+  }
+  return res;
+}
+
+function isGroup(layer) {
+  var klass = [layer class];
+  return klass === MSLayerGroup || klass === MSArtboardGroup;
+}
+
+function getLayerGroupsByTag(parent, tag) {
+  var all = [parent layers];
+  // sometimes layers returns an instance of JSCocoaController, I'm not sure why
+  if([all class] === JSCocoaController) return [];
+
+  var groups = filterNSArray(all, isGroup),
+      tagged = [],
+      notTagged = [];
+
+  groups.forEach(function(group) {
+    var name = [group name];
+    var groupTag = name.match(tagPattern);
+    if(groupTag && groupTag[1] === tag) {
+      tagged.push(group);
+    } else {
+      nested = getLayerGroupsByTag(group, tag);
+      Array.prototype.push.apply(tagged, nested);
+    }
+  });
+
+  return tagged;
+}
+
+function capitalize(str) {
+  return str.slice(0, 1).toUpperCase() + str.slice(1);
+}
+
+function syncProperties(src, dst, props) {
+  for(var j=0, k=props.length; j < k; j++) {
+    var getter = props[j];
+    var setter = 'set' + capitalize(getter);
+
+    dst[setter](src[getter]());
+  }
+}
+
+function copyLayerStyle(src, dst) {
+  var srcStyle = [src style],
+      dstStyle = [dst style],
+      srcContext = [srcStyle contextSettings],
+      dstContext = [dstStyle contextSettings],
+      collections = ['borders', 'fills', 'shadows', 'innerShadows'],
+      props = { 'borders': ['position', 'thickness', 'fillType', 'gradient', 'isEnabled'],
+                'fills': ['fillType', 'gradient', 'patternImage', 'noiseIntensity', 'isEnabled', 'color'],
+                'shadows': ['offsetX', 'offsetY', 'blurRadius', 'spread', 'color', 'isEnabled'],
+                'innerShadows': ['offsetX', 'offsetY', 'blurRadius', 'spread', 'color', 'isEnabled'],
+                'textLayer': ['fontSize', 'fontPostscriptName', 'textColor', 'textAlignment', 'characterSpacing', 'lineSpacing']
+              };
+
+  // copy layer styles
+  collections.forEach(function(collection) {
+    var srcCol = srcStyle[collection](),
+        dstCol = dstStyle[collection](),
+        propSet = props[collection];
+
+    for(var i=dstCol.length()-1; i >= 0; i--) {
+      dstCol.removeStylePartAtIndex(i);
+    }
+
+    for(var i=0, l=srcCol.length(); i < l; i++) {
+      var style = srcCol[i];
+      dstCol.addNewStylePart();
+      var newStyle = dstCol[dstCol.length() - 1];
+
+      syncProperties(style, newStyle, propSet);
+    }
+  })
+
+  // copy context settings
+  [dstContext setOpacity:[srcContext opacity]];
+  [dstContext setBlendMode:[srcContext blendMode]];
+
+  // text layer-specific properties (font size, line spacing, etc.)
+  if([dst class] === MSTextLayer) {
+    syncProperties(src, dst, props['textLayer']);
+  }
+}
+
+function copyLayerPosition(src, dst) {
+  var srcFrame = [src frame],
+      dstFrame = [dst frame];
+
+  if([src class] === MSTextLayer) {
+    var textBehaviour = [src textBehaviour], // 0 = flexible, 1 = fixed
+        alignment = [src textAlignment]; // 0 = left, 1 = right, 2 = center, 3 = justified
+
+    if(textBehaviour === 0) { // flexible text behaviour
+      switch(alignment) {
+        case 0: // left
+          [dstFrame setX:[srcFrame x]];
+          [dstFrame setY:[srcFrame y]];
+          break;
+        case 1: // right
+          [dstFrame setMaxX:[srcFrame maxX]];
+          [dstFrame setMaxY:[srcFrame maxY]];
+          break;
+        case 2: // center
+        case 3: // justified
+          [dstFrame setMidX:[srcFrame midX]];
+          [dstFrame setMidY:[srcFrame midY]];
+          break;
+      }
+    } else { // fixed text behaviour
+      [dstFrame setX:[srcFrame x]];
+      [dstFrame setY:[srcFrame y]];
+      [dstFrame setWidth:[srcFrame width]];
+      [dstFrame setHeight:[srcFrame height]];
+    }
+
+    [dst setTextBehaviour:textBehaviour];
+  } else {
+    [dstFrame setX:[srcFrame x]];
+    [dstFrame setY:[srcFrame y]];
+    [dstFrame setWidth:[srcFrame width]];
+    [dstFrame setHeight:[srcFrame height]];
+  }
+}
+
+(function main() {
+
+  // HACK: on a freshly started Sketch instance, 'selection' is null until you select an object
+  if(!(selection && [selection length])) {
+    alert("Make sure you've selected a symbol, or a layer that belongs to one before you try to sync.");
+    return;
+  }
+
+  var layerGroup = getNearestTaggedLayerGroup(selection[0]);
+  if(!layerGroup) {
+    alert("Make sure you've selected a symbol, or a layer that belongs to one before you try to sync.");
+    return;
+  }
+
+  var name = [layerGroup name];
+  var tag = name.match(tagPattern);
+
+  var tag = tag[1],
+      pages = [doc pages],
+      groups = [];
+
+  for(var i=0, l=pages.length(); i < l; i++) {
+    groups = Array.prototype.concat.apply(groups, getLayerGroupsByTag(pages[i], tag));
+  }
+
+  if(groups.length <= 1){
+    alert("Only "+groups.length+" symbols were found with name '"+tag+"'.\nAt least two symbols with same name are needed for reverse sync.");
+    return
+  }
+
+  var copied = false;
+
+  groups.forEach(function(group, i) {
+    if(group === layerGroup) return;
+    if(copied) return;
+
+    var targetLayers = toJSArray([layerGroup layers]),
+        layers = toJSArray([group layers]),
+        protectedLayerNames = [],
+        protectedLayers = [];
+
+    for(var i=0,l=targetLayers.length; i < l; i++) {
+      var layer = targetLayers[i],
+          name = ''+[layer name];
+
+      if(name.slice(0, 1) === '$') {
+        protectedLayerNames.push(name);
+        protectedLayers.push(targetLayers[i]);
+      }
+
+      layerGroup.removeLayer(targetLayers[i]);
+    }
+
+    for(var i=layers.length - 1; i >= 0; i--) {
+      var layer = layers[i],
+          name = ''+[layer name];
+
+      if(protectedLayerNames.indexOf(name) !== -1) {
+        var protected = protectedLayers.pop();
+        copyLayerStyle(layer, protected);
+        copyLayerPosition(layer, protected);
+        layerGroup.addLayer(protected);
+
+      } else {
+        var copy = [layer duplicate];
+        group.removeLayer(copy);
+        layerGroup.addLayer(copy);
+      }
+    }
+
+    group.resizeRoot();
+    copied = true;
+  });
+})();
