@@ -58,7 +58,7 @@ function filterNSArray(arr, test) {
 
 function isGroup(layer) {
 	var klass = [layer class];
-	return klass === MSLayerGroup || klass === MSArtboardGroup;
+	return klass === MSLayerGroup; // || klass === MSArtboardGroup;
 }
 
 function getLayerGroupsByTag(parent, tag) {
