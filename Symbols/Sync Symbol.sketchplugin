@@ -1,8 +1,9 @@
 // Syncs all instances of a symbol tagged with ": symbol-name" (cmd e)
 // v0.2
-// AXISJ sketch plugin v0.3
+// http://www.axisj.com - sketch3 Sync Symbol bug fetch - by Thomas Jang
 
 var tagPattern = /:\s*(.*)$/;
+var recursiveDepthLimit = 10; // recursive Depth Limit
 
 function alert(msg, title) {
 	title = title || "Whoops";
@@ -23,7 +24,6 @@ function getNearestTaggedLayerGroup(ref) {
 
 function toJSArray(arr) {
 	var len = arr.count(), res = [];
-
 	while(len--) {
 		res.push(arr[len]);
 	}
@@ -34,7 +34,7 @@ function toJSArray_layer(arr) {
 	var len = arr.count(), res = [];
 	function isLayer(item){
 		var klass = [item class];
-		log(klass);
+		//log(klass);
 
 		return klass === MSShapeGroup || klass === MSTextLayer || klass === MSBitmapLayer;
 	}
@@ -58,13 +58,17 @@ function filterNSArray(arr, test) {
 
 function isGroup(layer) {
 	var klass = [layer class];
-	return klass === MSLayerGroup; // || klass === MSArtboardGroup;
+	return klass === MSLayerGroup;// || klass === MSArtboardGroup;
 }
 
-function getLayerGroupsByTag(parent, tag) {
+function getLayerGroupsByTag(parent, tag, count) {
+	if(typeof count == "undefined") count = 0;
+	else if(count > recursiveDepthLimit) return [];
+
 	var all = [parent children];
 	// sometimes layers returns an instance of JSCocoaController, I'm not sure why
-	//if([all class] === JSCocoaController) return [];
+	// me too !!
+	// if([all class] != JSCocoaController) return [];
 
 	var groups = filterNSArray(all, isGroup),
 		tagged = [],
@@ -76,13 +80,14 @@ function getLayerGroupsByTag(parent, tag) {
 		if(groupTag && groupTag[1] === tag) {
 			tagged.push(group);
 		} else {
-			nested = getLayerGroupsByTag(group, tag);
+			var nested = getLayerGroupsByTag(group, tag, (count+1));
 			Array.prototype.push.apply(tagged, nested);
 		}
 	});
-
 	return tagged;
 }
+
+
 
 function capitalize(str) {
 	return str.slice(0, 1).toUpperCase() + str.slice(1);
