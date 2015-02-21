@@ -1,5 +1,7 @@
 # Sketch Symbols
 
+## DEPRECATED: Symbols are now part of Sketch 3.
+
 Sketch Symbols is a plug-in for [Sketch](http://bohemiancoding.com/sketch/) that lets you mimic basic Smart Objects / Symbols functionality by automatically syncing changes between layer groups named in a particular way. As an added bonus, you can mark certain text layers in your symbols as dynamic and have their styles replicated, but not their content.
 
 ## Demo
